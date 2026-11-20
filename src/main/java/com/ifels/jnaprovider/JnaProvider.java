@@ -1,4 +1,4 @@
-package com.ifels.cfxjna;
+package com.ifels.jnaprovider;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -11,13 +11,19 @@ import java.util.Properties;
  * Registers this jar as an ordinary Forge mod, and does nothing else.
  *
  * <p>The mod has no gameplay content and no API. Its whole purpose is that a jar
- * sitting in {@code mods/} is added to Forge's {@code LaunchClassLoader}, which
- * is where {@code com.sun.jna.*} has to be for anything that calls into a native
- * library through JNA — ControlFlex among them.</p>
+ * sitting in {@code mods/} is added to Forge's {@code LaunchClassLoader}, which is
+ * where {@code com.sun.jna.*} has to be for anything that calls into a native
+ * library through JNA. Every other mod in the instance sees those classes for
+ * free, without shipping its own copy and without a launcher class-path tweak.</p>
  *
  * <p>Minecraft 1.7.10 is the only version this is needed for. 1.8.9 and later
  * declare JNA in their own version JSON, so installing this there would only add
  * a second copy and make the winning version depend on jar ordering.</p>
+ *
+ * <p>A mod that wants to depend on this one declares
+ * {@code dependencies = "required-after:jnaprovider"} (or {@code after:} for a soft
+ * dependency) and compiles against {@code net.java.dev.jna:jna} from Maven
+ * Central — never against this jar, which carries no classes of its own to call.</p>
  *
  * <p>Deliberately absent from this class: any touch of JNA itself. Loading or
  * initialising {@code com.sun.jna.Native} at startup would decide the bootstrap
@@ -26,15 +32,15 @@ import java.util.Properties;
  * initialised.</p>
  */
 @Mod(
-        modid = CfxJna.MODID,
-        name = CfxJna.NAME,
+        modid = JnaProvider.MODID,
+        name = JnaProvider.NAME,
         acceptableRemoteVersions = "*",
         acceptedMinecraftVersions = "[1.7.10]"
 )
-public final class CfxJna {
+public final class JnaProvider {
 
-    public static final String MODID = "cfxjna";
-    public static final String NAME = "ControlFlex JNA";
+    public static final String MODID = "jnaprovider";
+    public static final String NAME = "JNA Provider";
 
     /**
      * Logged once at startup so a crash report answers the only question that
@@ -67,7 +73,7 @@ public final class CfxJna {
      */
     private static boolean jnaVisible() {
         try {
-            Class.forName("com.sun.jna.Native", false, CfxJna.class.getClassLoader());
+            Class.forName("com.sun.jna.Native", false, JnaProvider.class.getClassLoader());
             return true;
         } catch (Throwable t) {
             return false;
@@ -76,7 +82,7 @@ public final class CfxJna {
 
     private static Properties readOwnProperties() {
         Properties properties = new Properties();
-        try (InputStream in = CfxJna.class.getResourceAsStream("/cfxjna.properties")) {
+        try (InputStream in = JnaProvider.class.getResourceAsStream("/jnaprovider.properties")) {
             if (in != null) {
                 properties.load(in);
             }

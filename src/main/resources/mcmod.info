@@ -1,13 +1,13 @@
 [
   {
-    "modid": "cfxjna",
-    "name": "ControlFlex JNA",
-    "description": "Bundles JNA ${jnaVersion} for Forge 1.7.10, the one Minecraft version that ships no JNA of its own. With this in mods/, native-access mods work without a launcher tweak. Contains no gameplay content and no API.",
+    "modid": "jnaprovider",
+    "name": "JNA Provider",
+    "description": "Bundles JNA ${jnaVersion} for Forge 1.7.10, the one Minecraft version that ships no JNA of its own. With this in mods/, every mod in the instance can reach a native library through JNA without shipping its own copy or editing the launcher's class path. Contains no gameplay content and no API. Unofficial; not affiliated with the java-native-access project.",
     "version": "${version}",
     "mcversion": "1.7.10",
     "acceptedMinecraftVersions": "[1.7.10]",
     "authorList": ["ControlFlexMC"],
     "credits": "JNA is (c) the java-native-access project, dual-licensed Apache-2.0 OR LGPL-2.1; this jar redistributes it unmodified under Apache-2.0.",
-    "url": "https://github.com/ControlFlexMC/cfx-jna"
+    "url": "https://github.com/ControlFlexMC/jna-provider"
   }
 ]

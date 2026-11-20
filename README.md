@@ -1,12 +1,40 @@
-# ControlFlex JNA
+# JNA Provider
 
 Bundles [JNA](https://github.com/java-native-access/jna) for **Forge 1.7.10**, the
 one Minecraft version that ships no JNA of its own. Drop the jar in `mods/` and
-anything that reaches a native library through JNA works without editing the
-launcher's class path.
+every mod in the instance that reaches a native library through JNA works — no
+per-mod copy, no launcher class-path tweak.
 
 This mod contains no gameplay content and exposes no API. It exists so that other
 mods do not each have to bundle their own copy.
+
+Unofficial. Not affiliated with the java-native-access project.
+
+## Using it from another mod
+
+Two separate things, and it is worth keeping them apart:
+
+**At runtime**, declare it as a dependency and let Forge do the ordering:
+
+```java
+@Mod(modid = "mymod", dependencies = "required-after:jnaprovider")
+// or "after:jnaprovider" when the mod still works without JNA
+```
+
+The classes are on `LaunchClassLoader` for the whole process, so this is about the
+mod being *present*, not about class visibility — `after:` is enough for a soft
+dependency.
+
+**At compile time**, depend on JNA itself, never on this jar:
+
+```groovy
+compileOnly "net.java.dev.jna:jna:5.12.1"   // Maven Central
+```
+
+This jar carries no callable classes of its own, and depending on it would pin
+your build to a mod revision for nothing. Ship the same JNA version this mod
+bundles, or an older one whose API you stay inside — JNA 5.x is binary compatible
+back to 3.4.0 for the core types.
 
 ## Why this exists
 
@@ -34,7 +62,7 @@ second copy only makes the winning version depend on file ordering.
 
 ## Install
 
-1. Put `cfx-jna-<version>-mc1.7.10.jar` in `.minecraft/mods/`.
+1. Put `jna-provider-<version>-mc1.7.10.jar` in `.minecraft/mods/`.
 2. Start the game.
 
 Nothing to configure — no config file, no keybind, no command.
@@ -44,7 +72,7 @@ Nothing to configure — no config file, no keybind, no command.
 The mod logs one line during pre-init:
 
 ```
-[cfxjna] ControlFlex JNA 1.0.0 - bundles JNA 5.12.1; com.sun.jna.Native visible: true
+[jnaprovider] JNA Provider 1.0.0 - bundles JNA 5.12.1; com.sun.jna.Native visible: true
 ```
 
 `com.sun.jna.Native visible: false` means the classes are not reaching the class
@@ -54,8 +82,7 @@ JNA.
 ## What it bundles
 
 JNA 5.12.1, unmodified, including its native `jnidispatch` for every platform JNA
-supports. Only the core artifact is included; `jna-platform` is not, because
-ControlFlex does not use it.
+supports. Only the core artifact is included; `jna-platform` is not.
 
 `jna.nosys`, `jna.boot.library.path` and any class-transformer exclusions are
 **not** set here. Those belong to whoever loads the native library, and setting
@@ -69,7 +96,7 @@ build.
 
 ```bash
 ./gradlew build          # jar + verifyJar
-./gradlew jar            # build/libs/cfx-jna-<version>-mc1.7.10.jar
+./gradlew jar            # build/libs/jna-provider-<version>-mc1.7.10.jar
 ```
 
 `verifyJar` fails the build if the jar is missing `mcmod.info`, the mod class, the

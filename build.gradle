@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.github.ControlFlexMC'
-description = 'Bundles JNA for Forge 1.7.10'
+description = 'Provides JNA to every mod in a Forge 1.7.10 instance'
 
 repositories {
     // Forge 1.7.10's universal jar. Compile-only: nothing from it is packaged.
@@ -51,13 +51,13 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     inputs.property 'version', project.version
     inputs.property 'jnaVersion', jnaVersion
-    filesMatching(['mcmod.info', 'cfxjna.properties']) {
+    filesMatching(['mcmod.info', 'jnaprovider.properties']) {
         expand version: project.version, jnaVersion: jnaVersion
     }
 }
 
 jar {
-    archiveBaseName = 'cfx-jna'
+    archiveBaseName = 'jna-provider'
     archiveVersion = "${project.version}-mc1.7.10"
 
     // JNA is unpacked flat rather than nested: Forge 1.7.10 has no jar-in-jar,
@@ -92,7 +92,8 @@ tasks.register('verifyJar') {
 
         def required = [
                 'mcmod.info',
-                'com/ifels/cfxjna/CfxJna.class',
+                'jnaprovider.properties',
+                'com/ifels/jnaprovider/JnaProvider.class',
                 'com/sun/jna/Native.class',
                 'com/sun/jna/win32-x86-64/jnidispatch.dll',
                 'com/sun/jna/linux-x86-64/libjnidispatch.so',
