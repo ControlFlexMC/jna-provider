@@ -50,7 +50,7 @@ Read this part twice:
 ## Installation
 
 1. Install **Minecraft 1.7.10 + Forge** as usual.
-2. Drop `jna-provider-1.0.0-mc1.7.10.jar` into your `mods` folder.
+2. Drop `jna-provider-x.y.z-mc1.7.10.jar` into your `mods` folder.
 3. Start the game.
 
 That's it. Client, server, or both — a server-only install is fine too.
@@ -94,7 +94,7 @@ compatible back to 3.4.0 for the core types.
 The mod logs one line during pre-init:
 
 ```
-[jnaprovider] JNA Provider 1.0.0 - bundles JNA 5.12.1; com.sun.jna.Native visible: true
+[jnaprovider] JNA Provider <version> - bundles JNA 5.12.1; com.sun.jna.Native visible: true
 ```
 
 `com.sun.jna.Native visible: false` means the classes are not reaching the class
@@ -159,7 +159,7 @@ initialising it.
 Yes — client, server, or both. `acceptableRemoteVersions = "*"` means clients
 without it can still join.
 
-**About 1.7 MB for an "empty" mod — what's in it?**
+**About 1.8 MB for an "empty" mod — what's in it?**
 
 Almost all of it is `jnidispatch`: 27 platform builds, from `win32-x86` to
 `darwin-aarch64`, so the same jar works on Windows, macOS, Linux, and the
