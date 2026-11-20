@@ -18,12 +18,23 @@ Two separate things, and it is worth keeping them apart:
 
 ```java
 @Mod(modid = "mymod", dependencies = "after:jnaprovider")
-// "required-after:jnaprovider" only when the mod cannot work at all without JNA
+// two entries go in one string, separated by ';' -- never by ',':
+// dependencies = "required-after:unimixins;after:jnaprovider"
 ```
 
 Use `after:` unless JNA is genuinely mandatory — `required-after:` refuses to start
 the game when this mod is missing, which turns an optional provider into a hard
 requirement.
+
+The separator matters more than it looks. FML 1.7.10 splits the dependency string
+on `;` and then each entry on `:`, so a comma-separated pair is read as ONE entry
+with three colon parts, fails `Loader.computeDependencies`, and throws out of
+`bindMetadata` — leaving the container's version `null` and crashing later in
+`sortModList` with an NPE in `DefaultArtifactVersion`. The only clue is a single
+"Unable to parse dependency string" line. Editing `mcmod.info`'s `dependencies`
+array is not a substitute: without `useDependencyInformation` FML ignores it for
+sorting, and with it enabled the `required-after` entries lose their hard-gate
+status.
 
 The ordering is not cosmetic. Forge 1.7.10 does **not** put every `mods/*.jar` on
 the class path at launch: `FMLModContainer.constructMod` calls
