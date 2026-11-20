@@ -16,6 +16,12 @@ import java.util.Properties;
  * library through JNA. Every other mod in the instance sees those classes for
  * free, without shipping its own copy and without a launcher class-path tweak.</p>
  *
+ * <p>Visibility begins when this mod is constructed: FML adds a mod's jar to
+ * {@code LaunchClassLoader} inside {@code FMLModContainer.constructMod}, so a mod
+ * constructed earlier cannot resolve {@code com.sun.jna.*} yet. A consumer that
+ * touches JNA from its constructor must declare {@code after:jnaprovider}; from
+ * pre-init onwards everything is in place.</p>
+ *
  * <p>Minecraft 1.7.10 is the only version this is needed for. 1.8.9 and later
  * declare JNA in their own version JSON, so installing this there would only add
  * a second copy and make the winning version depend on jar ordering.</p>

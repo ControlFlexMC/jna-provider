@@ -17,13 +17,22 @@ Two separate things, and it is worth keeping them apart:
 **At runtime**, declare it as a dependency and let Forge do the ordering:
 
 ```java
-@Mod(modid = "mymod", dependencies = "required-after:jnaprovider")
-// or "after:jnaprovider" when the mod still works without JNA
+@Mod(modid = "mymod", dependencies = "after:jnaprovider")
+// "required-after:jnaprovider" only when the mod cannot work at all without JNA
 ```
 
-The classes are on `LaunchClassLoader` for the whole process, so this is about the
-mod being *present*, not about class visibility — `after:` is enough for a soft
-dependency.
+Use `after:` unless JNA is genuinely mandatory — `required-after:` refuses to start
+the game when this mod is missing, which turns an optional provider into a hard
+requirement.
+
+The ordering is not cosmetic. Forge 1.7.10 does **not** put every `mods/*.jar` on
+the class path at launch: `FMLModContainer.constructMod` calls
+`ModClassLoader.addFile(source)` for its own jar and only then instantiates the mod
+class. A mod constructed earlier can therefore not resolve `com.sun.jna.*` yet, and
+touching JNA from a constructor fails with `NoClassDefFoundError` unless this mod is
+constructed first. Everything from `FMLPreInitializationEvent` onwards is safe,
+because every mod has been constructed by then — the constructor is the one place
+that is not. Declare `after:` and stop depending on modid ordering.
 
 **At compile time**, depend on JNA itself, never on this jar:
 
