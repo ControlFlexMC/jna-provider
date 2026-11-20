@@ -91,8 +91,9 @@ pack.
 
 ## Building
 
-Requires JDK 8 or newer (the jar targets Java 8) and network access on the first
-build.
+Requires JDK 17 — Gradle 8.1.1 refuses to start on Java 20 or newer
+(`Unsupported class file major version`), and `--release 8` needs JDK 9+ — plus
+network access on the first build. The jar itself targets Java 8.
 
 ```bash
 ./gradlew build          # jar + verifyJar
