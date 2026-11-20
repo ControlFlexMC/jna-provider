@@ -118,7 +118,15 @@ network access on the first build. The jar itself targets Java 8.
 ```bash
 ./gradlew build          # jar + verifyJar
 ./gradlew jar            # build/libs/jna-provider-<version>-mc1.7.10.jar
+
+./tools/build-provider.sh            # picks a JDK, builds, deploys to $MC_1_7_10_FORGE_PATH
+./tools/build-provider.sh --release  # ... and copies to $RELEASE_DEPLOY_PATH
+./tools/build-provider.sh --keep-logs  # ... without clearing the instance's logs
 ```
+
+The script exists because the build needs a JDK in 9..19 and the default one
+usually is not: it finds such a JVM, runs the same `build` task, then replaces any
+older `jna-provider-*.jar` in the instance and reports what shipped.
 
 `verifyJar` fails the build if the jar is missing `mcmod.info`, the mod class, the
 JNA classes or the `jnidispatch` natives, or if any Forge/Minecraft class leaked
